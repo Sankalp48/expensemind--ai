@@ -33,3 +33,5 @@ def get_expense(db: Session, expense_id: int):
     return db.query(models.Expense).filter(
         models.Expense.id == expense_id
     ).first()
+
+ 
