@@ -34,7 +34,7 @@ def get_expense(db: Session, expense_id: int):
         models.Expense.id == expense_id
     ).first()
 
-    
+
 # Update an expense
 def update_expense(db: Session, expense_id: int, expense: schemas.ExpenseCreate):
 
@@ -52,5 +52,18 @@ def update_expense(db: Session, expense_id: int, expense: schemas.ExpenseCreate)
         db.refresh(db_expense)
 
     return db_expense
+
+# Delete an expense
+def delete_expense(db: Session, expense_id: int):
+
+    db_expense = db.query(models.Expense).filter(
+        models.Expense.id == expense_id
+    ).first()
+
+    if db_expense:
+        db.delete(db_expense)
+        db.commit()
+
+    return db_expense    
 
  

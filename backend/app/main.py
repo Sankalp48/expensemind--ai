@@ -59,3 +59,11 @@ def update_expense(
     db: Session = Depends(get_db)
 ):
     return crud.update_expense(db, expense_id, expense)    
+
+ # Delete an expense
+@app.delete("/expenses/{expense_id}", response_model=schemas.ExpenseResponse)
+def delete_expense(
+    expense_id: int,
+    db: Session = Depends(get_db)
+):
+    return crud.delete_expense(db, expense_id)   
