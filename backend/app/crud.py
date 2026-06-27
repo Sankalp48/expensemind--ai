@@ -34,4 +34,23 @@ def get_expense(db: Session, expense_id: int):
         models.Expense.id == expense_id
     ).first()
 
+    
+# Update an expense
+def update_expense(db: Session, expense_id: int, expense: schemas.ExpenseCreate):
+
+    db_expense = db.query(models.Expense).filter(
+        models.Expense.id == expense_id
+    ).first()
+
+    if db_expense:
+
+        db_expense.title = expense.title
+        db_expense.amount = expense.amount
+        db_expense.category = expense.category
+
+        db.commit()
+        db.refresh(db_expense)
+
+    return db_expense
+
  

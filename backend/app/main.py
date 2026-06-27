@@ -50,3 +50,12 @@ def get_expense(
     db: Session = Depends(get_db)
 ):
     return crud.get_expense(db, expense_id)
+
+# Update an expense
+@app.put("/expenses/{expense_id}", response_model=schemas.ExpenseResponse)
+def update_expense(
+    expense_id: int,
+    expense: schemas.ExpenseCreate,
+    db: Session = Depends(get_db)
+):
+    return crud.update_expense(db, expense_id, expense)    
