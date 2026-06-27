@@ -37,3 +37,8 @@ def create_expense(
     db: Session = Depends(get_db)
 ):
     return crud.create_expense(db, expense)
+
+    # Get all expenses
+@app.get("/expenses", response_model=list[schemas.ExpenseResponse])
+def get_expenses(db: Session = Depends(get_db)):
+    return crud.get_expenses(db)
