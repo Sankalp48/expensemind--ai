@@ -71,4 +71,18 @@ def delete_expense(
 # Get total expenses
 @app.get("/analytics/total")
 def get_total_expenses(db: Session = Depends(get_db)):
-    return crud.get_total_expenses(db)    
+    return crud.get_total_expenses(db)   
+
+# Get total expenses by category
+@app.get("/analytics/category")
+def get_expenses_by_category(db: Session = Depends(get_db)):
+    return crud.get_expenses_by_category(db)     
+
+
+# Register User
+@app.post("/register", response_model=schemas.UserResponse)
+def register_user(
+    user: schemas.UserCreate,
+    db: Session = Depends(get_db)
+):
+    return crud.create_user(db, user)    
