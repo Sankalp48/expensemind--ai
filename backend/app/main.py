@@ -67,3 +67,8 @@ def delete_expense(
     db: Session = Depends(get_db)
 ):
     return crud.delete_expense(db, expense_id)   
+
+# Get total expenses
+@app.get("/analytics/total")
+def get_total_expenses(db: Session = Depends(get_db)):
+    return crud.get_total_expenses(db)    

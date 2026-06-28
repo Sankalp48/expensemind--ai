@@ -1,5 +1,8 @@
 # Import SQLAlchemy session
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+
 
 # Import database model and schema
 from app import models, schemas
@@ -64,6 +67,17 @@ def delete_expense(db: Session, expense_id: int):
         db.delete(db_expense)
         db.commit()
 
-    return db_expense    
+    return db_expense 
+
+# Get total expenses
+def get_total_expenses(db: Session):
+
+    total = db.query(
+        func.sum(models.Expense.amount)
+    ).scalar()
+
+    return {
+        "total_expenses": total or 0
+    }       
 
  
