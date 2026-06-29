@@ -1,5 +1,6 @@
 # Import SQLAlchemy data types used to create database columns
 from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey
+from sqlalchemy.orm import relationship
 
 # Import Base class from database.py
 # Every database table must inherit from Base
@@ -12,6 +13,7 @@ class User(Base):
     username = Column(String(100), unique=True, index=True)
     email = Column(String(100), unique=True, index=True)
     hashed_password = Column(String(255))
+    expenses = relationship("Expense", back_populates="owner")
 
 
 class Expense(Base):
@@ -24,3 +26,4 @@ class Expense(Base):
     date = Column(Date)
 
     user_id = Column(Integer, ForeignKey("users.id"))
+    owner = relationship("User", back_populates="expenses")

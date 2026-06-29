@@ -17,14 +17,19 @@ pwd_context = CryptContext(
 
 
 # Create a new expense
-def create_expense(db: Session, expense: schemas.ExpenseCreate):
+def create_expense(
+    db: Session,
+    expense: schemas.ExpenseCreate,
+    user_id: int
+):
 
     # Convert request data into a database object
     db_expense = models.Expense(
-        title=expense.title,
-        amount=expense.amount,
-        category=expense.category
-    )
+    title=expense.title,
+    amount=expense.amount,
+    category=expense.category,
+    user_id=user_id
+)
 
     # Save to database
     db.add(db_expense)
@@ -35,8 +40,13 @@ def create_expense(db: Session, expense: schemas.ExpenseCreate):
 
 
 # Get all expenses
-def get_expenses(db: Session):
-    return db.query(models.Expense).all()
+def get_expenses(
+    db: Session,
+    user_id: int
+):
+    return db.query(models.Expense).filter(
+        models.Expense.user_id == user_id
+    ).all()
 
 
 # Get one expense by ID
