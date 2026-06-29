@@ -82,6 +82,10 @@ def delete_expense(db: Session, expense_id: int):
 def get_password_hash(password: str):
     return pwd_context.hash(password)
 
+# Verify Password
+def verify_password(plain_password: str, hashed_password: str):
+    return pwd_context.verify(plain_password, hashed_password)    
+
 
 # Create User
 def create_user(db: Session, user: schemas.UserCreate):
@@ -103,12 +107,25 @@ def create_user(db: Session, user: schemas.UserCreate):
 
     return db_user
 
-    
+
 # Get User by Email
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(
         models.User.email == email
     ).first()
+
+# Login User
+def authenticate_user(db: Session, email: str, password: str):
+
+    user = get_user_by_email(db, email)
+
+    if not user:
+        return None
+
+    if not verify_password(password, user.hashed_password):
+        return None
+
+    return user    
 
 # Get total expenses
 def get_total_expenses(db: Session):

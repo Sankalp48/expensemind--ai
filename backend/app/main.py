@@ -9,7 +9,8 @@ from app.database import engine, Base
 from app import models
 
 from app.database import get_db
-from app import schemas, crud
+from app import schemas, crud, auth
+
 
 # Create all tables in the database
 Base.metadata.create_all(bind=engine)
@@ -38,7 +39,8 @@ def create_expense(
 ):
     return crud.create_expense(db, expense)
 
-    # Get all expenses
+
+ # Get all expenses
 @app.get("/expenses", response_model=list[schemas.ExpenseResponse])
 def get_expenses(db: Session = Depends(get_db)):
     return crud.get_expenses(db)
@@ -86,3 +88,32 @@ def register_user(
     db: Session = Depends(get_db)
 ):
     return crud.create_user(db, user)    
+
+
+# Login User
+@app.post("/login")
+def login_user(
+    user: schemas.UserLogin,
+    db: Session = Depends(get_db)
+):
+    db_user = crud.authenticate_user(
+        db,
+        user.email,
+        user.password
+    )
+
+    if not db_user:
+        return {
+            "message": "Invalid email or password"
+        }
+
+    access_token = auth.create_access_token(
+        data={
+            "sub": db_user.email
+        }
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
