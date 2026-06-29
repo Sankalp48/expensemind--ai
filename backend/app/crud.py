@@ -23,7 +23,7 @@ def create_expense(
     user_id: int
 ):
 
-    # Convert request data into a database object
+ # Convert request data into a database object
     db_expense = models.Expense(
     title=expense.title,
     amount=expense.amount,
@@ -31,7 +31,7 @@ def create_expense(
     user_id=user_id
 )
 
-    # Save to database
+# Save to database
     db.add(db_expense)
     db.commit()
     db.refresh(db_expense)
@@ -50,17 +50,27 @@ def get_expenses(
 
 
 # Get one expense by ID
-def get_expense(db: Session, expense_id: int):
+def get_expense(
+    db: Session,
+    expense_id: int,
+    user_id: int
+):
     return db.query(models.Expense).filter(
-        models.Expense.id == expense_id
+        models.Expense.id == expense_id,
+        models.Expense.user_id == user_id
     ).first()
 
-
 # Update an expense
-def update_expense(db: Session, expense_id: int, expense: schemas.ExpenseCreate):
+def update_expense(
+    db: Session,
+    expense_id: int,
+    expense: schemas.ExpenseCreate,
+    user_id: int
+):
 
     db_expense = db.query(models.Expense).filter(
-        models.Expense.id == expense_id
+        models.Expense.id == expense_id,
+        models.Expense.user_id == user_id
     ).first()
 
     if db_expense:
@@ -75,17 +85,23 @@ def update_expense(db: Session, expense_id: int, expense: schemas.ExpenseCreate)
     return db_expense
 
 # Delete an expense
-def delete_expense(db: Session, expense_id: int):
+def delete_expense(
+    db: Session,
+    expense_id: int,
+    user_id: int
+):
 
     db_expense = db.query(models.Expense).filter(
-        models.Expense.id == expense_id
+        models.Expense.id == expense_id,
+        models.Expense.user_id == user_id
     ).first()
 
     if db_expense:
         db.delete(db_expense)
         db.commit()
 
-    return db_expense 
+    return db_expense    
+
 
 
 # Hash Password
@@ -135,28 +151,37 @@ def authenticate_user(db: Session, email: str, password: str):
     if not verify_password(password, user.hashed_password):
         return None
 
-    return user    
+    return user 
+
 
 # Get total expenses
-def get_total_expenses(db: Session):
+def get_total_expenses(
+    db: Session,
+    user_id: int
+):
 
     total = db.query(
         func.sum(models.Expense.amount)
+    ).filter(
+        models.Expense.user_id == user_id
     ).scalar()
 
     return {
         "total_expenses": total or 0
-    }       
+    }
 
 # Get total expenses by category
-def get_expenses_by_category(db: Session):
+def get_expenses_by_category(
+    db: Session,
+    user_id: int
+):
     return (
         db.query(
             models.Expense.category,
             func.sum(models.Expense.amount).label("total")
         )
+        .filter(models.Expense.user_id == user_id)
         .group_by(models.Expense.category)
         .all()
-    )    
-
+    )
  

@@ -64,7 +64,11 @@ def get_expense(
     db: Session = Depends(get_db),
     current_user = Depends(auth.get_current_user)
 ):
-    return crud.get_expense(db, expense_id)
+    return crud.get_expense(
+    db,
+    expense_id,
+    current_user.id
+)
 
 # Update an expense
 @app.put("/expenses/{expense_id}", response_model=schemas.ExpenseResponse)
@@ -83,18 +87,34 @@ def delete_expense(
     db: Session = Depends(get_db),
     current_user = Depends(auth.get_current_user)
 ):
-    return crud.delete_expense(db, expense_id)   
+    return crud.delete_expense(
+    db,
+    expense_id,
+    current_user.id
+)
 
 # Get total expenses
 @app.get("/analytics/total")
-def get_total_expenses(db: Session = Depends(get_db)):
-    return crud.get_total_expenses(db)   
+def get_total_expenses(
+    db: Session = Depends(get_db),
+    current_user = Depends(auth.get_current_user)
+):
+    return crud.get_total_expenses(
+        db,
+        current_user.id
+    )
+
 
 # Get total expenses by category
 @app.get("/analytics/category")
-def get_expenses_by_category(db: Session = Depends(get_db)):
-    return crud.get_expenses_by_category(db)     
-
+def get_expenses_by_category(
+    db: Session = Depends(get_db),
+    current_user = Depends(auth.get_current_user)
+):
+    return crud.get_expenses_by_category(
+        db,
+        current_user.id
+    )
 
 # Register User
 @app.post("/register", response_model=schemas.UserResponse)
