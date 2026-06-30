@@ -10,7 +10,7 @@ from app.database import engine, Base
 from app import models
 
 from app.database import get_db
-from app import schemas, crud, auth
+from app import schemas, crud, auth, ai
 
 
 # Create all tables in the database
@@ -115,6 +115,18 @@ def get_expenses_by_category(
         db,
         current_user.id
     )
+
+# Get AI-powered expense insights
+@app.get("/insights")
+def get_insights(
+    db: Session = Depends(get_db),
+    current_user = Depends(auth.get_current_user)
+):
+    return ai.get_ai_insights(
+        db,
+        current_user.id
+    )
+
 
 # Register User
 @app.post("/register", response_model=schemas.UserResponse)
