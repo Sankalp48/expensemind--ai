@@ -44,12 +44,20 @@ def get_ai_insights(db: Session, user_id: int):
     )
 
     # Call Gemini and return the text
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
+    try:
+        client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
 
-    return {
-        "insights": response.text
-    }
+        return {
+            "insights": response.text
+        }
+
+    except Exception as e:
+        # Print the real reason in the server console for debugging
+        print("AI error:", e)
+        return {
+            "insights": "AI is temporarily unavailable. Please try again later."
+        }
